@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -8,14 +9,21 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: const SafeArea(
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
-            children: [],
+            children: [
+              Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/images/logo/logo.svg',
+                    height: 40,
+                    width: 40,
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
