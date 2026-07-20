@@ -6,7 +6,7 @@ class AppColors {
   // Brand Colors
   static const Color fireRed = Color(0xFFD23D2D);
   static const Color retroGreen = Color(0xFF31603D);
-  static const Color vanillaCream = Color(0xFFF8EECB);
+  static const Color vanillaCream = Color(0xFFFFFBF2);
   static const Color saffron = Color(0xFFF5C065);
   static const Color russet = Color(0xFF6E433D);
 
