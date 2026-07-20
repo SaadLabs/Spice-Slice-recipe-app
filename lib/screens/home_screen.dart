@@ -1,8 +1,35 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  Future<void> searchRecipes(String query) async {
+    if (query.trim().isEmpty) return;
+
+    print("Searching: $query");
+
+    // TODO:
+    // Call your MealDB API here.
+    // Example:
+    // final meals = await MealDbService.searchMeals(query);
+    // setState(() {
+    //   _meals = meals;
+    // });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +44,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -26,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Hello',
+                          "Hello",
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -37,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                         const SizedBox(height: 4),
 
                         Text(
-                          'Find your next favorite\nrecipe.',
+                          "Find your next favorite\nrecipe.",
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
@@ -69,6 +97,41 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+
+              const SizedBox(height: 30),
+
+              // Search Bar
+              TextField(
+                controller: _searchController,
+                textInputAction: TextInputAction.search,
+                onSubmitted: searchRecipes,
+                decoration: InputDecoration(
+                  hintText: "Search recipes...",
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 18),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 25),
+
+              // Results will go here
+              const Expanded(
+                child: Center(
+                  child: Text("Search for a recipe 🍽️"),
+                ),
               ),
             ],
           ),
