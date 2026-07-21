@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
+import '../widgets/recipe_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,10 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 50,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -128,9 +126,24 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 25),
 
               // Results will go here
-              const Expanded(
-                child: Center(
-                  child: Text("Search for a recipe 🍽️"),
+              Expanded(
+                child: ListView(
+                  children: const [
+                    Text(
+                      "Today's Picks",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+
+                    SizedBox(height: 18),
+
+                    RecipeCard(),
+                    RecipeCard(),
+                    RecipeCard(),
+                  ],
                 ),
               ),
             ],

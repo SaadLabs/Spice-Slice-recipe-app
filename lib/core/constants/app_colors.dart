@@ -26,4 +26,9 @@ class AppColors {
   static const Color success = retroGreen;
   static const Color error = fireRed;
   static const Color warning = saffron;
+
+  // Navigation
+  static const Color navSelected = fireRed;
+  static const Color navUnselected = textSecondary;
+  static const Color navIndicator = saffron;
 }
