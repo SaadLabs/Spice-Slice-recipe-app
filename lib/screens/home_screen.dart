@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../widgets/recipe_card.dart';
+// Note: Adjust this import path depending on where your file is located!
+import 'recipe_detail_screen.dart'; 
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,6 +34,16 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  // Navigation helper to go to the details screen
+  void _goToRecipeDetails() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const RecipeDetailScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: const [
                         Text(
                           "Hello",
                           style: TextStyle(
@@ -59,9 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: AppColors.textSecondary,
                           ),
                         ),
-
-                        const SizedBox(height: 4),
-
+                        SizedBox(height: 4),
                         Text(
                           "Find your next favorite\nrecipe.",
                           style: TextStyle(
@@ -74,9 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-
                   const SizedBox(width: 16),
-
                   Material(
                     color: Colors.white,
                     elevation: 2,
@@ -125,11 +133,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 25),
 
-              // Results will go here
+              // Results
               Expanded(
                 child: ListView(
-                  children: const [
-                    Text(
+                  // We removed "const" here so the RecipeCards can use the onTap function
+                  children: [
+                    const Text(
                       "Today's Picks",
                       style: TextStyle(
                         fontSize: 22,
@@ -137,12 +146,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: AppColors.textPrimary,
                       ),
                     ),
-
-                    SizedBox(height: 18),
-
-                    RecipeCard(),
-                    RecipeCard(),
-                    RecipeCard(),
+                    const SizedBox(height: 18),
+                    
+                    // Passing the navigation helper to each card
+                    RecipeCard(onTap: _goToRecipeDetails),
+                    RecipeCard(onTap: _goToRecipeDetails),
+                    RecipeCard(onTap: _goToRecipeDetails),
                   ],
                 ),
               ),
