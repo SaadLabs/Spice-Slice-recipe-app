@@ -16,7 +16,7 @@ class RecipeCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 18),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(17),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
