@@ -42,7 +42,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: const Text("Profile"),
         centerTitle: true,
-        backgroundColor: AppColors.vanillaCream,
+        backgroundColor: AppColors.fireRed,
+        foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: Padding(
