@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../widgets/recipe_card.dart';
-// Note: Adjust this import path depending on where your file is located!
 import 'recipe_detail_screen.dart'; 
 
 class HomeScreen extends StatefulWidget {
@@ -50,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
