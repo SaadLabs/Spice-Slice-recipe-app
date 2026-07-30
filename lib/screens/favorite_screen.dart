@@ -17,7 +17,7 @@ class FavoriteScreen extends StatelessWidget {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 29),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
