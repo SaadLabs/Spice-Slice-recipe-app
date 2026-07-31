@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    searchRecipes("chicken");
+    loadTodayPicks();
   }
 
   final TextEditingController _searchController = TextEditingController();
@@ -24,27 +24,49 @@ class _HomeScreenState extends State<HomeScreen> {
   final MealService _mealService = MealService();
 
   List<Meal> _meals = [];
+  List<Meal> _searchResults = [];
+
   bool _isLoading = false;
+  bool _isSearching = false;
 
-  Future<void> searchRecipes(String query) async {
-    if (query.trim().isEmpty) return;
+Future<void> searchRecipes(String query) async {
+  if (query.trim().isEmpty) {
+    setState(() {
+      _isSearching = false;
+      _searchResults.clear();
+    });
+    return;
+  }
 
+  setState(() {
+    _isSearching = true;
+    _isLoading = true;
+  });
+
+  try {
+    final meals = await _mealService.searchMeals(query);
+
+    setState(() {
+      _searchResults = meals;
+    });
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
+  Future<void> loadTodayPicks() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final meals = await _mealService.searchMeals(query);
+      final meals = await _mealService.searchMeals("chicken");
 
       setState(() {
-        _meals = meals;
+        _todayPicks = meals;
       });
-    } catch (e) {
-      setState(() {
-        _meals = [];
-      });
-
-      debugPrint(e.toString());
     } finally {
       setState(() {
         _isLoading = false;
