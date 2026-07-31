@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../widgets/recipe_card.dart';
 import 'recipe_detail_screen.dart'; 
+import '../models/meal.dart';
+import '../services/meal_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,19 +15,32 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  Future<void> searchRecipes(String query) async {
-    if (query.trim().isEmpty) return;
+  final MealService _mealService = MealService();
 
-    print("Searching: $query");
+List<Meal> _meals = [];
+bool _isLoading = false;
 
-    // TODO:
-    // Call your MealDB API here.
-    // Example:
-    // final meals = await MealDbService.searchMeals(query);
-    // setState(() {
-    //   _meals = meals;
-    // });
+Future<void> searchRecipes(String query) async {
+  if (query.trim().isEmpty) return;
+
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final meals = await _mealService.searchMeals(query);
+
+    setState(() {
+      _meals = meals;
+    });
+  } catch (e) {
+    print(e);
   }
+
+  setState(() {
+    _isLoading = false;
+  });
+}
 
   @override
   void dispose() {
@@ -148,9 +163,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 18),
                     
                     // Passing the navigation helper to each card
-                    RecipeCard(onTap: _goToRecipeDetails),
-                    RecipeCard(onTap: _goToRecipeDetails),
-                    RecipeCard(onTap: _goToRecipeDetails),
+                    if (_isLoading)
+  const Center(
+    child: CircularProgressIndicator(),
+  )
+else
+  ..._meals.map(
+    (meal) => ListTile(
+      leading: Image.network(meal.thumbnail),
+      title: Text(meal.name),
+    ),
+  ),
                   ],
                 ),
               ),
