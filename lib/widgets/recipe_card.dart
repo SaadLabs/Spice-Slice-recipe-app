@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
+import '../models/meal.dart';
 
 class RecipeCard extends StatelessWidget {
-  // 1. Add the onTap callback here
+  final Meal meal;
   final VoidCallback onTap;
 
-  const RecipeCard({super.key, required this.onTap});
+  const RecipeCard({
+    super.key,
+    required this.meal,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // 2. Wrap the Container in a GestureDetector
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -33,29 +37,32 @@ class RecipeCard extends StatelessWidget {
                 top: Radius.circular(18),
               ),
               child: Image.network(
-                "https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg",
+                meal.thumbnail,
                 height: 200,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
+
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "Chicken Alfredo",
-                    style: TextStyle(
+                    meal.name,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  SizedBox(height: 6),
+
+                  const SizedBox(height: 6),
+
                   Text(
-                    "Italian • Chicken",
-                    style: TextStyle(
+                    meal.category,
+                    style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
                     ),
