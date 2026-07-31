@@ -190,18 +190,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     else
                       ..._meals.map(
-                        (meal) => ListTile(
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              meal.thumbnail,
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          title: Text(meal.name),
-                        ),
+                        (meal) =>
+                            RecipeCard(meal: meal, onTap: _goToRecipeDetails),
                       ),
                   ],
                 ),
