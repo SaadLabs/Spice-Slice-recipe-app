@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
-import '../widgets/recipe_card.dart';
-import 'recipe_detail_screen.dart';
 import '../models/meal.dart';
 import '../services/meal_service.dart';
+import '../widgets/recipe_card.dart';
+import 'recipe_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,48 +13,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    loadTodayPicks();
-  }
-
   final TextEditingController _searchController = TextEditingController();
-
   final MealService _mealService = MealService();
 
-  List<Meal> _meals = [];
+  List<Meal> _todayPicks = [];
   List<Meal> _searchResults = [];
 
   bool _isLoading = false;
   bool _isSearching = false;
 
-Future<void> searchRecipes(String query) async {
-  if (query.trim().isEmpty) {
-    setState(() {
-      _isSearching = false;
-      _searchResults.clear();
-    });
-    return;
+  @override
+  void initState() {
+    super.initState();
+    loadTodayPicks();
   }
-
-  setState(() {
-    _isSearching = true;
-    _isLoading = true;
-  });
-
-  try {
-    final meals = await _mealService.searchMeals(query);
-
-    setState(() {
-      _searchResults = meals;
-    });
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
-  }
-}
 
   Future<void> loadTodayPicks() async {
     setState(() {
@@ -66,6 +38,41 @@ Future<void> searchRecipes(String query) async {
 
       setState(() {
         _todayPicks = meals;
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> searchRecipes(String query) async {
+    if (query.trim().isEmpty) {
+      setState(() {
+        _isSearching = false;
+        _searchResults.clear();
+      });
+      return;
+    }
+
+    setState(() {
+      _isSearching = true;
+      _isLoading = true;
+    });
+
+    try {
+      final meals = await _mealService.searchMeals(query);
+
+      setState(() {
+        _searchResults = meals;
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+
+      setState(() {
+        _searchResults = [];
       });
     } finally {
       setState(() {
@@ -80,27 +87,33 @@ Future<void> searchRecipes(String query) async {
     super.dispose();
   }
 
-  // Navigation helper to go to the details screen
   void _goToRecipeDetails() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RecipeDetailScreen()),
+      MaterialPageRoute(
+        builder: (context) => const RecipeDetailScreen(),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final mealsToShow =
+        _isSearching ? _searchResults : _todayPicks;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 29),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 22,
+            vertical: 29,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
+              /// Header
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
@@ -128,7 +141,6 @@ Future<void> searchRecipes(String query) async {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 16),
                   Material(
                     color: Colors.white,
                     elevation: 2,
@@ -151,7 +163,7 @@ Future<void> searchRecipes(String query) async {
 
               const SizedBox(height: 30),
 
-              // Search Bar
+              /// Search Bar
               TextField(
                 controller: _searchController,
                 textInputAction: TextInputAction.search,
@@ -163,11 +175,17 @@ Future<void> searchRecipes(String query) async {
                     icon: const Icon(Icons.clear),
                     onPressed: () {
                       _searchController.clear();
+
+                      setState(() {
+                        _isSearching = false;
+                        _searchResults.clear();
+                      });
                     },
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 18),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 18),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(18),
                     borderSide: BorderSide.none,
@@ -177,22 +195,22 @@ Future<void> searchRecipes(String query) async {
 
               const SizedBox(height: 25),
 
-              // Results
               Expanded(
                 child: ListView(
-                  // We removed "const" here so the RecipeCards can use the onTap function
                   children: [
-                    const Text(
-                      "Today's Picks",
-                      style: TextStyle(
+                    Text(
+                      _isSearching
+                          ? "Search Results"
+                          : "Today's Picks",
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
                     ),
+
                     const SizedBox(height: 18),
 
-                    // Passing the navigation helper to each card
                     if (_isLoading)
                       const Center(
                         child: Padding(
@@ -200,20 +218,25 @@ Future<void> searchRecipes(String query) async {
                           child: CircularProgressIndicator(),
                         ),
                       )
-                    else if (_meals.isEmpty)
+                    else if (mealsToShow.isEmpty)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 40),
                         child: Center(
                           child: Text(
                             "No recipes found 🍽️",
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                       )
                     else
-                      ..._meals.map(
-                        (meal) =>
-                            RecipeCard(meal: meal, onTap: _goToRecipeDetails),
+                      ...mealsToShow.map(
+                        (meal) => RecipeCard(
+                          meal: meal,
+                          onTap: _goToRecipeDetails,
+                        ),
                       ),
                   ],
                 ),
