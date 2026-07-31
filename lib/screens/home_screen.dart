@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../widgets/recipe_card.dart';
-import 'recipe_detail_screen.dart'; 
+import 'recipe_detail_screen.dart';
 import '../models/meal.dart';
 import '../services/meal_service.dart';
 
@@ -17,30 +17,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final MealService _mealService = MealService();
 
-List<Meal> _meals = [];
-bool _isLoading = false;
+  List<Meal> _meals = [];
+  bool _isLoading = false;
 
-Future<void> searchRecipes(String query) async {
-  if (query.trim().isEmpty) return;
-
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final meals = await _mealService.searchMeals(query);
+  Future<void> searchRecipes(String query) async {
+    if (query.trim().isEmpty) return;
 
     setState(() {
-      _meals = meals;
+      _isLoading = true;
     });
-  } catch (e) {
-    print(e);
-  }
 
-  setState(() {
-    _isLoading = false;
-  });
-}
+    try {
+      final meals = await _mealService.searchMeals(query);
+
+      setState(() {
+        _meals = meals;
+      });
+    } catch (e) {
+      print(e);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -52,9 +52,7 @@ Future<void> searchRecipes(String query) async {
   void _goToRecipeDetails() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const RecipeDetailScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const RecipeDetailScreen()),
     );
   }
 
@@ -64,7 +62,7 @@ Future<void> searchRecipes(String query) async {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 29),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 29),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -161,19 +159,17 @@ Future<void> searchRecipes(String query) async {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    
+
                     // Passing the navigation helper to each card
                     if (_isLoading)
-  const Center(
-    child: CircularProgressIndicator(),
-  )
-else
-  ..._meals.map(
-    (meal) => ListTile(
-      leading: Image.network(meal.thumbnail),
-      title: Text(meal.name),
-    ),
-  ),
+                      const Center(child: CircularProgressIndicator())
+                    else
+                      ..._meals.map(
+                        (meal) => ListTile(
+                          leading: Image.network(meal.thumbnail),
+                          title: Text(meal.name),
+                        ),
+                      ),
                   ],
                 ),
               ),
