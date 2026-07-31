@@ -13,6 +13,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    searchRecipes("chicken");
+  }
+
   final TextEditingController _searchController = TextEditingController();
 
   final MealService _mealService = MealService();
@@ -34,12 +40,16 @@ class _HomeScreenState extends State<HomeScreen> {
         _meals = meals;
       });
     } catch (e) {
-      print(e);
-    }
+      setState(() {
+        _meals = [];
+      });
 
-    setState(() {
-      _isLoading = false;
-    });
+      debugPrint(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -162,11 +172,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     // Passing the navigation helper to each card
                     if (_isLoading)
-                      const Center(child: CircularProgressIndicator())
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(40),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    else if (_meals.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: Center(
+                          child: Text(
+                            "No recipes found 🍽️",
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                        ),
+                      )
                     else
                       ..._meals.map(
                         (meal) => ListTile(
-                          leading: Image.network(meal.thumbnail),
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              meal.thumbnail,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                           title: Text(meal.name),
                         ),
                       ),
