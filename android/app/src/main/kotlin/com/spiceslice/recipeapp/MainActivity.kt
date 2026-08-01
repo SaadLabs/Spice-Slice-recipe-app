@@ -1,4 +1,4 @@
-package com.example.recipe_app
+package com.spiceslice.recipeapp
 
 import io.flutter.embedding.android.FlutterActivity
 

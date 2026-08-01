@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1036081452587",
+    "project_id": "spiceslice-7c389",
+    "storage_bucket": "spiceslice-7c389.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036081452587:android:9e4793a321544d9d827c6e",
+        "android_client_info": {
+          "package_name": "com.spiceslice.recipeapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKjgYT-_jZ8V1NDk0ey_HEKcATqSvIhP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
