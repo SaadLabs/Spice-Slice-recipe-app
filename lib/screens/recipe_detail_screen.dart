@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../models/meal.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RecipeDetailScreen extends StatelessWidget {
   final Meal meal;
