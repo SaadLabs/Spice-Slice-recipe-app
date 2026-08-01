@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../models/meal.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../core/utils/launcher.dart';
 
 class RecipeDetailScreen extends StatelessWidget {
   final Meal meal;
@@ -168,9 +169,7 @@ class RecipeDetailScreen extends StatelessWidget {
                               vertical: 16,
                             ),
                           ),
-                          onPressed: () {
-                            // TODO: Launch YouTube URL
-                          },
+                          onPressed: () => _launchUrl(meal.youtube),
                           icon: const Icon(Icons.play_circle_fill),
                           label: const Text("Watch on YouTube"),
                         ),
@@ -187,9 +186,7 @@ class RecipeDetailScreen extends StatelessWidget {
                               vertical: 16,
                             ),
                           ),
-                          onPressed: () {
-                            // TODO: Launch Source URL
-                          },
+                          onPressed: () => _launchUrl(meal.source),
                           icon: const Icon(Icons.public),
                           label: const Text("View Original Recipe"),
                         ),
