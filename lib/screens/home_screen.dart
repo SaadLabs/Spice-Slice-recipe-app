@@ -87,28 +87,22 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _goToRecipeDetails() {
+  void _goToRecipeDetails(Meal meal) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const RecipeDetailScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => RecipeDetailScreen(meal: meal)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final mealsToShow =
-        _isSearching ? _searchResults : _todayPicks;
+    final mealsToShow = _isSearching ? _searchResults : _todayPicks;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 22,
-            vertical: 29,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 29),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -184,8 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 18),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 18),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(18),
                     borderSide: BorderSide.none,
@@ -199,9 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListView(
                   children: [
                     Text(
-                      _isSearching
-                          ? "Search Results"
-                          : "Today's Picks",
+                      _isSearching ? "Search Results" : "Today's Picks",
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -224,10 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Center(
                           child: Text(
                             "No recipes found 🍽️",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
                         ),
                       )
@@ -235,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ...mealsToShow.map(
                         (meal) => RecipeCard(
                           meal: meal,
-                          onTap: _goToRecipeDetails,
+                          onTap: () => _goToRecipeDetails(meal),
                         ),
                       ),
                   ],
