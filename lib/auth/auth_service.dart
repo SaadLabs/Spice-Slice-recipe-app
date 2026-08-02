@@ -45,14 +45,30 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    final credential = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    await credential.user?.updateDisplayName(name);
+      await credential.user?.updateDisplayName(name);
 
-    return credential;
+      return credential;
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'email-already-in-use':
+          throw Exception('This email is already registered.');
+
+        case 'weak-password':
+          throw Exception('Password should be at least 6 characters.');
+
+        case 'invalid-email':
+          throw Exception('Please enter a valid email.');
+
+        default:
+          throw Exception(e.message ?? 'Registration failed.');
+      }
+    }
   }
 
   // Logout
