@@ -14,21 +14,45 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    return await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      return await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'invalid-credential':
+          throw Exception('Invalid email or password.');
+
+        case 'user-not-found':
+          throw Exception('No account found with this email.');
+
+        case 'wrong-password':
+          throw Exception('Incorrect password.');
+
+        case 'invalid-email':
+          throw Exception('Invalid email address.');
+
+        default:
+          throw Exception(e.message ?? 'Login failed.');
+      }
+    }
   }
 
   // Register
   Future<UserCredential> signUp({
+    required String name,
     required String email,
     required String password,
   }) async {
-    return await _auth.createUserWithEmailAndPassword(
+    final credential = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
+
+    await credential.user?.updateDisplayName(name);
+
+    return credential;
   }
 
   // Logout
