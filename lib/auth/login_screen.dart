@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import 'register_screen.dart';
+import 'auth_service.dart';
+import '../screens/main_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../core/constants/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,25 +35,23 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Connect AuthService here
-
-      await Future.delayed(const Duration(seconds: 1));
+      await AuthService().signIn(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Login Successful"),
-        ),
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainScreen()),
       );
-
-      Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
 
     if (mounted) {
@@ -60,31 +62,29 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Login"),backgroundColor: AppColors.fireRed,
+        foregroundColor: Colors.white, centerTitle: true),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
                 const SizedBox(height: 20),
 
-                const Icon(
-                  Icons.restaurant_menu,
-                  size: 90,
-                ),
+                SvgPicture.asset(
+                  'assets/images/logo/logo.svg',
+                    height: 140,
+                  ),
 
                 const SizedBox(height: 20),
 
                 Text(
                   "Spice&Slice",
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
 
                 const SizedBox(height: 8),
