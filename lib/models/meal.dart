@@ -57,4 +57,17 @@ class Meal {
       ingredients: ingredients,
     );
   }
+  factory Meal.fromFirestore(Map<String, dynamic> data) {
+  return Meal(
+    id: data['id'] ?? '',
+    name: data['name'] ?? '',
+    thumbnail: data['thumbnail'] ?? '',
+    category: data['category'] ?? '',
+    area: '',
+    instructions: '',
+    youtube: '',
+    source: '',
+    ingredients: [],
+  );
+}
 }

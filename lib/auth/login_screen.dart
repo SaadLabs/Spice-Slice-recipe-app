@@ -75,19 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 SvgPicture.asset(
                   'assets/images/logo/logo.svg',
-                    height: 140,
+                    height: 150,
                   ),
 
                 const SizedBox(height: 20),
-
-                Text(
-                  "Spice&Slice",
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
 
                 Text(
                   "Welcome Back!",

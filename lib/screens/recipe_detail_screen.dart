@@ -3,14 +3,55 @@ import '../core/constants/app_colors.dart';
 import '../models/meal.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/utils/launcher.dart';
+import '../services/favorite_service.dart';
 
-class RecipeDetailScreen extends StatelessWidget {
+class RecipeDetailScreen extends StatefulWidget {
   final Meal meal;
 
-  const RecipeDetailScreen({
-    super.key,
-    required this.meal,
-  });
+  const RecipeDetailScreen({super.key, required this.meal});
+
+  @override
+  State<RecipeDetailScreen> createState() => _RecipeDetailScreenState();
+}
+
+class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
+  final FavoriteService _favoriteService = FavoriteService();
+
+  bool _isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorite();
+  }
+
+  Future<void> _loadFavorite() async {
+    _isFavorite = await _favoriteService.isFavorite(widget.meal.id);
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (_isFavorite) {
+      await _favoriteService.removeFavorite(widget.meal.id);
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Removed from favorites")));
+    } else {
+      await _favoriteService.addFavorite(widget.meal);
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Added to favorites")));
+    }
+
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +69,7 @@ class RecipeDetailScreen extends StatelessWidget {
                       bottom: Radius.circular(30),
                     ),
                     child: Image.network(
-                      meal.thumbnail,
+                      widget.meal.thumbnail,
                       height: 280,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -53,13 +94,11 @@ class RecipeDetailScreen extends StatelessWidget {
                     child: CircleAvatar(
                       backgroundColor: Colors.white,
                       child: IconButton(
-                        icon: const Icon(
-                          Icons.favorite_border,
+                        icon: Icon(
+                          _isFavorite ? Icons.favorite : Icons.favorite_border,
                           color: AppColors.fireRed,
                         ),
-                        onPressed: () {
-                          // TODO: Add favorites
-                        },
+                        onPressed: _toggleFavorite,
                       ),
                     ),
                   ),
@@ -72,7 +111,7 @@ class RecipeDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      meal.name,
+                      widget.meal.name,
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -87,16 +126,14 @@ class RecipeDetailScreen extends StatelessWidget {
                       children: [
                         Chip(
                           backgroundColor: AppColors.saffron,
-                          label: Text(meal.category),
+                          label: Text(widget.meal.category),
                         ),
 
                         Chip(
                           backgroundColor: AppColors.retroGreen,
                           label: Text(
-                            meal.area,
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
+                            widget.meal.area,
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ),
                       ],
@@ -115,7 +152,7 @@ class RecipeDetailScreen extends StatelessWidget {
 
                     const SizedBox(height: 15),
 
-                    ...meal.ingredients.map(
+                    ...widget.meal.ingredients.map(
                       (item) => Card(
                         elevation: 2,
                         margin: const EdgeInsets.only(bottom: 10),
@@ -127,9 +164,7 @@ class RecipeDetailScreen extends StatelessWidget {
                           title: Text(item["ingredient"]!),
                           trailing: Text(
                             item["measure"]!,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -149,7 +184,7 @@ class RecipeDetailScreen extends StatelessWidget {
                     const SizedBox(height: 15),
 
                     Text(
-                      meal.instructions,
+                      widget.meal.instructions,
                       style: const TextStyle(
                         fontSize: 16,
                         height: 1.7,
@@ -159,35 +194,31 @@ class RecipeDetailScreen extends StatelessWidget {
 
                     const SizedBox(height: 35),
 
-                    if (meal.youtube.isNotEmpty)
+                    if (widget.meal.youtube.isNotEmpty)
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.fireRed,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          onPressed: () => launchURL(meal.youtube),
+                          onPressed: () => launchURL(widget.meal.youtube),
                           icon: const Icon(Icons.play_circle_fill),
                           label: const Text("Watch on YouTube"),
                         ),
                       ),
 
-                    if (meal.source.isNotEmpty) ...[
+                    if (widget.meal.source.isNotEmpty) ...[
                       const SizedBox(height: 15),
 
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          onPressed: () => launchURL(meal.source),
+                          onPressed: () => launchURL(widget.meal.source),
                           icon: const Icon(Icons.public),
                           label: const Text("View Original Recipe"),
                         ),

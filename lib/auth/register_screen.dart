@@ -3,6 +3,8 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import 'auth_service.dart';
 import 'login_screen.dart';
+import '../core/constants/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -70,41 +72,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Create Account"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Create Account"),backgroundColor: AppColors.fireRed,
+        foregroundColor: Colors.white, centerTitle: true),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
                 const SizedBox(height: 20),
 
-                const Icon(
-                  Icons.restaurant_menu,
-                  size: 90,
-                ),
+                SvgPicture.asset(
+                  'assets/images/logo/logo.svg',
+                    height: 150,
+                  ),
 
                 const SizedBox(height: 20),
-
-                Text(
-                  "Spice&Slice",
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-
-                const SizedBox(height: 8),
-
-                Text(
-                  "Create your account",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-
-                const SizedBox(height: 40),
 
                 CustomTextField(
                   controller: _nameController,
