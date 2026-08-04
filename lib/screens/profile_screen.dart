@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../auth/auth_service.dart';
 import '../auth/login_screen.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,6 +14,47 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (pickedFile == null) return;
+
+    final imageFile = File(pickedFile.path);
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('profile_image', imageFile.path);
+
+    setState(() {
+      _profileImage = imageFile;
+    });
+  }
+
+  Future<void> _removeImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('profile_image');
+
+    setState(() {
+      _profileImage = null;
+    });
+  }
+
+  Future<void> _loadProfileImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final path = prefs.getString('profile_image');
+
+    if (path != null && File(path).existsSync()) {
+      setState(() {
+        _profileImage = File(path);
+      });
+    }
+  }
+
+  File? _profileImage;
   final AuthService _authService = AuthService();
 
   @override
@@ -22,6 +66,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (user != null) {
       _nameController.text = user.displayName ?? "";
     }
+
+    _loadProfileImage();
   }
 
   bool _showPasswordFields = false;
@@ -66,24 +112,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     const SizedBox(height: 10),
 
-                    ValueListenableBuilder<TextEditingValue>(
-                      valueListenable: _nameController,
-                      builder: (context, value, child) {
-                        final name = value.text.trim();
+                    GestureDetector(
+                      onTap: () async {
+                        if (_profileImage == null) {
+                          await _pickImage();
+                        } else {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (_) => SafeArea(
+                              child: Wrap(
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.photo),
+                                    title: const Text("Change Photo"),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      await _pickImage();
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
+                                    title: const Text("Remove Photo"),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      await _removeImage();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundColor: AppColors.fireRed,
+                            backgroundImage: _profileImage != null
+                                ? FileImage(_profileImage!)
+                                : null,
+                            child: _profileImage == null
+                                ? ValueListenableBuilder<TextEditingValue>(
+                                    valueListenable: _nameController,
+                                    builder: (context, value, child) {
+                                      final name = value.text.trim();
 
-                        return CircleAvatar(
-                          radius: 50,
-                          backgroundColor: AppColors.fireRed,
-                          child: Text(
-                            name.isEmpty ? "U" : name[0].toUpperCase(),
-                            style: const TextStyle(
+                                      return Text(
+                                        name.isEmpty
+                                            ? "U"
+                                            : name[0].toUpperCase(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 40,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : null,
+                          ),
+
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
                               color: Colors.white,
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              size: 18,
+                              color: Colors.black87,
                             ),
                           ),
-                        );
-                      },
+                        ],
+                      ),
                     ),
 
                     const SizedBox(height: 12),
