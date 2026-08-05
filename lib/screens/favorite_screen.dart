@@ -46,7 +46,7 @@ class FavoriteScreen extends StatelessWidget {
                   children: const [
                     Icon(
                       Icons.favorite_border,
-                      size: 89,
+                      size: 90,
                       color: AppColors.fireRed,
                     ),
                     SizedBox(height: 20),
