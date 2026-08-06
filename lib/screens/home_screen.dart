@@ -33,58 +33,72 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfileImageService.instance.load();
   }
 
-  Future<void> loadTodayPicks() async {
-    setState(() {
-      _isLoading = true;
-    });
+Future<void> loadTodayPicks() async {
+  if (!mounted) return;
 
-    try {
-      final meals = await _mealService.searchMeals("chicken");
+  setState(() {
+    _isLoading = true;
+  });
 
-      setState(() {
-        _todayPicks = meals;
-      });
-    } catch (e) {
-      debugPrint(e.toString());
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
+  try {
+    final meals = await _mealService.searchMeals("chicken");
 
-  Future<void> searchRecipes(String query) async {
-    if (query.trim().isEmpty) {
-      setState(() {
-        _isSearching = false;
-        _searchResults.clear();
-      });
-      return;
-    }
+    if (!mounted) return;
 
     setState(() {
-      _isSearching = true;
-      _isLoading = true;
+      _todayPicks = meals;
     });
+  } catch (e) {
+    debugPrint(e.toString());
+  } finally {
+    if (!mounted) return;
 
-    try {
-      final meals = await _mealService.searchMeals(query);
-
-      setState(() {
-        _searchResults = meals;
-      });
-    } catch (e) {
-      debugPrint(e.toString());
-
-      setState(() {
-        _searchResults = [];
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
+
+Future<void> searchRecipes(String query) async {
+  if (query.trim().isEmpty) {
+    if (!mounted) return;
+
+    setState(() {
+      _isSearching = false;
+      _searchResults.clear();
+    });
+    return;
+  }
+
+  setState(() {
+    _isSearching = true;
+    _isLoading = true;
+  });
+
+  try {
+    final meals = await _mealService.searchMeals(query);
+
+    if (!mounted) return;
+
+    setState(() {
+      _searchResults = meals;
+    });
+  } catch (e) {
+    debugPrint(e.toString());
+
+    if (!mounted) return;
+
+    setState(() {
+      _searchResults = [];
+    });
+  } finally {
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
 
   @override
   void dispose() {

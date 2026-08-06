@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/profile_image_service.dart';
+import 'main_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,24 +16,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
+await ProfileImageService.instance.save(imageFile);
 
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
-
-    if (pickedFile == null) return;
-
-    final imageFile = File(pickedFile.path);
-
-    await ProfileImageService.instance.save(imageFile);
-
-    setState(() {
-      _profileImage = imageFile;
-    });
-  }
+setState(() {
+  _profileImage = imageFile;
+});
 
   Future<void> _removeImage() async {
     await ProfileImageService.instance.remove();
@@ -42,16 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  Future<void> _loadProfileImage() async {
-    await ProfileImageService.instance.load();
 
-    setState(() {
-      _profileImage = ProfileImageService.instance.profileImage.value;
-    });
-  }
-
-  File? _profileImage;
-  
   final AuthService _authService = AuthService();
 
   @override
@@ -64,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _nameController.text = user.displayName ?? "";
     }
 
-    _loadProfileImage();
+    ProfileImageService.instance.load();
   }
 
   bool _showPasswordFields = false;
@@ -447,7 +426,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const LoginScreen(),
+                              builder: (_) => const MainScreen(),
                             ),
                             (route) => false,
                           );
