@@ -4,7 +4,6 @@ import '../auth/auth_service.dart';
 import '../auth/login_screen.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../services/profile_image_service.dart';
 import 'main_screen.dart';
 
@@ -16,20 +15,21 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-await ProfileImageService.instance.save(imageFile);
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
 
-setState(() {
-  _profileImage = imageFile;
-});
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (pickedFile == null) return;
+    await ProfileImageService.instance.save(File(pickedFile.path));
+  }
 
   Future<void> _removeImage() async {
     await ProfileImageService.instance.remove();
-
-    setState(() {
-      _profileImage = null;
-    });
   }
-
 
   final AuthService _authService = AuthService();
 
@@ -42,7 +42,6 @@ setState(() {
     if (user != null) {
       _nameController.text = user.displayName ?? "";
     }
-
     ProfileImageService.instance.load();
   }
 
@@ -90,7 +89,8 @@ setState(() {
 
                     GestureDetector(
                       onTap: () async {
-                        if (_profileImage == null) {
+                        if (ProfileImageService.instance.profileImage.value ==
+                            null) {
                           await _pickImage();
                         } else {
                           showModalBottomSheet(
@@ -126,31 +126,37 @@ setState(() {
                       child: Stack(
                         alignment: Alignment.bottomRight,
                         children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundColor: AppColors.fireRed,
-                            backgroundImage: _profileImage != null
-                                ? FileImage(_profileImage!)
-                                : null,
-                            child: _profileImage == null
-                                ? ValueListenableBuilder<TextEditingValue>(
-                                    valueListenable: _nameController,
-                                    builder: (context, value, child) {
-                                      final name = value.text.trim();
+                          ValueListenableBuilder<File?>(
+                            valueListenable:
+                                ProfileImageService.instance.profileImage,
+                            builder: (context, image, child) {
+                              return CircleAvatar(
+                                radius: 50,
+                                backgroundColor: AppColors.fireRed,
+                                backgroundImage: image != null
+                                    ? FileImage(image)
+                                    : null,
+                                child: image == null
+                                    ? ValueListenableBuilder<TextEditingValue>(
+                                        valueListenable: _nameController,
+                                        builder: (context, value, child) {
+                                          final name = value.text.trim();
 
-                                      return Text(
-                                        name.isEmpty
-                                            ? "U"
-                                            : name[0].toUpperCase(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : null,
+                                          return Text(
+                                            name.isEmpty
+                                                ? "U"
+                                                : name[0].toUpperCase(),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 40,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : null,
+                              );
+                            },
                           ),
 
                           Container(
@@ -420,13 +426,15 @@ setState(() {
                           if (logout != true) return;
 
                           await _authService.signOut();
+                          // Clear profile image from memory
+ProfileImageService.instance.clearMemory();
 
                           if (!mounted) return;
 
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const MainScreen(),
+                              builder: (_) => const LoginScreen(),
                             ),
                             (route) => false,
                           );
