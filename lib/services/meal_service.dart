@@ -25,4 +25,21 @@ class MealService {
     throw Exception('Failed to load meals');
   }
 }
+Future<Meal?> getMealById(String id) async {
+  final response = await http.get(
+    Uri.parse('$baseUrl/lookup.php?i=$id'),
+  );
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+
+    if (data['meals'] == null) {
+      return null;
+    }
+
+    return Meal.fromJson(data['meals'][0]);
+  } else {
+    throw Exception('Failed to load meal');
+  }
+}
 }

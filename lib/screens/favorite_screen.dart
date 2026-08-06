@@ -7,6 +7,7 @@ import 'recipe_detail_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../auth/login_screen.dart';
 import '../auth/register_screen.dart';
+import '../services/meal_service.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -157,14 +158,18 @@ class FavoriteScreen extends StatelessWidget {
 
               return RecipeCard(
                 meal: meal,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => RecipeDetailScreen(meal: meal),
-                    ),
-                  );
-                },
+onTap: () async {
+  final fullMeal = await MealService().getMealById(meal.id);
+
+  if (fullMeal != null && context.mounted) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RecipeDetailScreen(meal: fullMeal),
+      ),
+    );
+  }
+},
               );
             },
           );
