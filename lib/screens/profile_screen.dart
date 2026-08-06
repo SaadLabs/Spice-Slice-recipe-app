@@ -5,6 +5,7 @@ import '../auth/login_screen.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/profile_image_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -26,8 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final imageFile = File(pickedFile.path);
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('profile_image', imageFile.path);
+    await ProfileImageService.instance.save(imageFile);
 
     setState(() {
       _profileImage = imageFile;
@@ -35,8 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _removeImage() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('profile_image');
+    await ProfileImageService.instance.remove();
 
     setState(() {
       _profileImage = null;
@@ -44,14 +43,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadProfileImage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final path = prefs.getString('profile_image');
+    await ProfileImageService.instance.load();
 
-    if (path != null && File(path).existsSync()) {
-      setState(() {
-        _profileImage = File(path);
-      });
-    }
+    setState(() {
+      _profileImage = ProfileImageService.instance.profileImage.value;
+    });
   }
 
   File? _profileImage;

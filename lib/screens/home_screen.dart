@@ -5,7 +5,7 @@ import '../services/meal_service.dart';
 import '../widgets/recipe_card.dart';
 import 'recipe_detail_screen.dart';
 import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../services/profile_image_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,7 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
     loadTodayPicks();
+
+    ProfileImageService.instance.load();
   }
 
   Future<void> loadTodayPicks() async {
@@ -144,13 +147,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: InkWell(
                       onTap: () {},
                       customBorder: const CircleBorder(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(14),
-                        child: Icon(
-                          Icons.person_outline_rounded,
-                          size: 24,
-                          color: AppColors.textPrimary,
-                        ),
+                      child: ValueListenableBuilder<File?>(
+                        valueListenable:
+                            ProfileImageService.instance.profileImage,
+                        builder: (context, image, child) {
+                          return CircleAvatar(
+                            radius: 26,
+                            backgroundColor: AppColors.fireRed,
+                            backgroundImage: image != null
+                                ? FileImage(image)
+                                : null,
+                            child: image == null
+                                ? const Icon(
+                                    Icons.person_outline_rounded,
+                                    color: AppColors.textPrimary,
+                                  )
+                                : null,
+                          );
+                        },
                       ),
                     ),
                   ),
