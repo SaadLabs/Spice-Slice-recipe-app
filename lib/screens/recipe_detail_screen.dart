@@ -4,6 +4,8 @@ import '../models/meal.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/utils/launcher.dart';
 import '../services/favorite_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../auth/login_screen.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final Meal meal;
@@ -22,7 +24,10 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _loadFavorite();
+
+    if (FirebaseAuth.instance.currentUser != null) {
+      _loadFavorite();
+    }
   }
 
   Future<void> _loadFavorite() async {
@@ -34,23 +39,37 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   Future<void> _toggleFavorite() async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+      return;
+    }
+
     if (_isFavorite) {
       await _favoriteService.removeFavorite(widget.meal.id);
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Removed from favorites")));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Removed from favorites")));
+      }
     } else {
       await _favoriteService.addFavorite(widget.meal);
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Added to favorites")));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Added to favorites")));
+      }
     }
 
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
+    if (mounted) {
+      setState(() {
+        _isFavorite = !_isFavorite;
+      });
+    }
   }
 
   @override
