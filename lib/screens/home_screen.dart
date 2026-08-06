@@ -4,6 +4,8 @@ import '../models/meal.dart';
 import '../services/meal_service.dart';
 import '../widgets/recipe_card.dart';
 import 'recipe_detail_screen.dart';
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
