@@ -6,6 +6,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/profile_image_service.dart';
 import 'main_screen.dart';
+import '../auth/register_screen.dart';
+import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -450,12 +452,82 @@ ProfileImageService.instance.clearMemory();
                   ],
                 ),
               )
-            : const Center(
-                child: Text(
-                  "You are not logged in.",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
+            : Center(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.account_circle_outlined,
+            size: 90,
+            color: Colors.grey,
+          ),
+
+          const SizedBox(height: 20),
+
+          const Text(
+            "You're not logged in",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          const Text(
+            "Login or create an account to save your favorite recipes and manage your profile.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 15,
+            ),
+          ),
+
+          const SizedBox(height: 30),
+
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.fireRed,
+                foregroundColor: Colors.white,
               ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const LoginScreen(),
+                  ),
+                );
+              },
+              child: const Text("Login"),
+            ),
+          ),
+
+          const SizedBox(height: 15),
+
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const RegisterScreen(),
+                  ),
+                );
+              },
+              child: const Text("Create Account"),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
       ),
     );
   }
