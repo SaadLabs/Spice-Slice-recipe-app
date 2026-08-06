@@ -51,6 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   File? _profileImage;
+  
   final AuthService _authService = AuthService();
 
   @override
