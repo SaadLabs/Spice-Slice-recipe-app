@@ -121,7 +121,7 @@ Future<void> searchRecipes(String query) async {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 29),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 29),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
