@@ -6,6 +6,7 @@ import '../core/utils/launcher.dart';
 import '../services/favorite_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../auth/login_screen.dart';
+import '../services/interstitial_ad_service.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final Meal meal;
@@ -18,8 +19,14 @@ class RecipeDetailScreen extends StatefulWidget {
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   final FavoriteService _favoriteService = FavoriteService();
+  final InterstitialAdService _interstitialAdService = InterstitialAdService();
 
   bool _isFavorite = false;
+  @override
+  void dispose() {
+    _interstitialAdService.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -28,6 +35,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     if (FirebaseAuth.instance.currentUser != null) {
       _loadFavorite();
     }
+    _interstitialAdService.loadAd();
   }
 
   Future<void> _loadFavorite() async {
@@ -102,7 +110,10 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       backgroundColor: Colors.white,
                       child: IconButton(
                         icon: const Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          _interstitialAdService.showAd();
+                          Navigator.pop(context);
+                        },
                       ),
                     ),
                   ),
