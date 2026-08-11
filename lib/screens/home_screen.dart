@@ -6,6 +6,7 @@ import '../widgets/recipe_card.dart';
 import 'recipe_detail_screen.dart';
 import 'dart:io';
 import '../services/profile_image_service.dart';
+import '../widgets/banner_ad_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -259,6 +260,7 @@ Future<void> searchRecipes(String query) async {
                   ],
                 ),
               ),
+              const BannerAdWidget(),
             ],
           ),
         ),
