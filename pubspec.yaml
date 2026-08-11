@@ -55,6 +55,7 @@ flutter_launcher_icons:
   android: true
   ios: false   # Change to true if you build for iPhone
   image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
