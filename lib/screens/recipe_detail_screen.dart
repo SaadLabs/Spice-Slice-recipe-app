@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../models/meal.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../core/utils/launcher.dart';
 import '../services/favorite_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';

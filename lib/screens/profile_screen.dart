@@ -5,9 +5,7 @@ import '../auth/login_screen.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/profile_image_service.dart';
-import 'main_screen.dart';
 import '../auth/register_screen.dart';
-import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

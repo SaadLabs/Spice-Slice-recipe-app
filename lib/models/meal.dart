@@ -7,12 +7,7 @@ class Meal {
   final String instructions;
   final String youtube;
   final String source;
-
-  /// Each item contains:
-  /// {
-  ///   "ingredient": "Chicken",
-  ///   "measure": "500g"
-  /// }
+  
   final List<Map<String, String>> ingredients;
 
   Meal({
